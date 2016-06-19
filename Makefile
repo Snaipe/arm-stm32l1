@@ -1,4 +1,5 @@
-SRCS = main.c
+SRCS = main.c \
+       usart.c
 
 PROJ_NAME=main
 
