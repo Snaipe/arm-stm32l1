@@ -4,16 +4,19 @@
 
 #include "usart.h"
 
-void usart_clock_setup(void)
+void usart_setup(void)
 {
 	/* We are running on MSI after boot. */
 	/* Enable GPIOD clock for USART */
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_USART1);
-}
 
-void usart_setup(void)
-{
+	/* Setup GPIO pins for USART1 transmit. */
+	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
+
+	/* Setup USART1 TX pin as alternate function. */
+	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
+
 	/* Setup USART1 parameters. */
 	usart_set_baudrate(USART1, 38400);
 	usart_set_databits(USART1, 8);
@@ -24,16 +27,6 @@ void usart_setup(void)
 
 	usart_enable(USART1);
 }
-
-void gpio_setup(void)
-{
-	/* Setup GPIO pins for USART1 transmit. */
-	gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO9);
-
-	/* Setup USART1 TX pin as alternate function. */
-	gpio_set_af(GPIOA, GPIO_AF7, GPIO9);
-}
-
 
 void usart_print_s32(uint32_t usart, int32_t value)
 {
@@ -70,3 +63,10 @@ void usart_print_float(uint32_t usart, float value)
 	usart_send_blocking(usart, ptr[2]);
 	usart_send_blocking(usart, ptr[3]);
 }
+
+void usart_send_str(uint32_t uart, const char *str)
+{
+    for (; *str; ++str)
+        usart_send_blocking(uart, *str);
+}
+

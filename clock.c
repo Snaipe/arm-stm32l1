@@ -2,7 +2,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/iwdg.h>
 
-#define SAMPLING_TIME 5 * 60
+#define SAMPLING_TIME 1
 
 static volatile uint32_t counter;
 static volatile uint16_t periods;
@@ -12,8 +12,6 @@ void sys_tick_handler(void)
     counter = (counter + 1) % (1000 * SAMPLING_TIME);
     if (counter == 0)
         ++periods;
-
-    iwdg_reset();
 }
 
 void reset_periods(void)
@@ -36,9 +34,4 @@ void setup_clock(void)
     systick_set_reload(3999);
     systick_interrupt_enable();
     systick_counter_enable();
-
-    /* Setup watchdog expiration after 2ms w/o reset */
-    iwdg_set_period_ms(2);
-    iwdg_reset();
-    iwdg_start();
 }

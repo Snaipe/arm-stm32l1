@@ -1,5 +1,6 @@
 SRCS = main.c \
 	   usart.c \
+	   hts221.c \
 	   clock.c
 
 PROJ_NAME=main
