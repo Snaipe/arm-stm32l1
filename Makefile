@@ -10,25 +10,40 @@ GDB := $(TRIPLE)-gdb
 STUTIL := st-util
 STFLASH := st-flash
 
-CFLAGS = -Wall -std=c99 -Os -g -gdwarf-2 \
-		 -mthumb \
-		 -fno-builtin \
+ARCH_FLAGS = \
 		 -mcpu=cortex-m3 \
+		 -mthumb \
+		 -msoft-float \
+		 -mfix-cortex-m3-ldrd
+
+FORMAT_FLAGS = \
+		 -fno-builtin \
 		 -ffunction-sections \
 		 -fdata-sections \
-		 -mabi=aapcs \
 		 -fverbose-asm \
-		 -DSTM32L1 \
+		 -fno-common
+
+WARNINGS = -Wall -Wstrict-prototypes
+
+DEBUG_FLAGS = -Os -g -gdwarf-2
+
+CFLAGS = -std=c99 \
+		 $(WARNINGS) \
+		 $(DEBUG_FLAGS) \
+		 $(FORMAT_FLAGS) \
+		 $(ARCH_FLAGS) \
+		 -MD -DSTM32L1 \
 		 -Iopencm3/include
 
-LDFLAGS = -mcpu=cortex-m3 \
-		  -mthumb \
+LDFLAGS = $(ARCH_FLAGS) \
+		  --static \
 		  -nostartfiles \
 		  -Wl,-gc-sections \
-		  -Tlibopencm3_stm32l1.ld \
-		  -Wl,-Map=$(PROJ_NAME).map,--cref,-no-warn-mismatch \
+		  -Topencm3/lib/stm32/l1/stm32l15xxc.ld \
+		  -Wl,-Map=$(PROJ_NAME).map
 
-LIBS = -Lopencm3/lib -lopencm3_stm32l1
+LIBS = -Lopencm3/lib -lopencm3_stm32l1 \
+	   -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 
 OBJS = $(SRCS:.c=.o)
 
