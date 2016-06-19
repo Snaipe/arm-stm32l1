@@ -2,6 +2,7 @@
 #include <libopencm3/stm32/iwdg.h>
 #include <libopencm3/stm32/usart.h>
 
+#include "clock.h"
 #include "usart.h"
 
 static int16_t hts221_get_temperature(int16_t T0_OUT,
@@ -38,17 +39,27 @@ static float hts221_get_humidity(int16_t H0_T0_OUT,
 
 int main(void)
 {
-	iwdg_set_period_ms(1000);
-	iwdg_reset();
-	iwdg_start();
+    setup_clock();
 
 	usart_clock_setup();
 	usart_setup();
 	gpio_setup();
 
-	while (1) {
-		usart_print_u16(USART1, -2000);
-	}
+    /* Reset TTY */
+    usart_send_blocking(USART1, 0x1B);
+    usart_send_blocking(USART1, 'c');
+
+    usart_send_blocking(USART1, 's');
+    usart_send_blocking(USART1, 't');
+    usart_send_blocking(USART1, 'm');
+    usart_send_blocking(USART1, '\r');
+    usart_send_blocking(USART1, '\n');
+
+    for (volatile int i = 0; i < 100000; ++i);
+
+    while (1) {
+        usart_print_s32(USART1, get_periods());
+    }
 
 	return 0;
 }
