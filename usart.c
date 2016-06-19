@@ -60,3 +60,13 @@ void usart_print_s32(uint32_t usart, int32_t value)
 	usart_send_blocking(usart, '\r');
 	usart_send_blocking(usart, '\n');
 }
+
+void usart_print_float(uint32_t usart, float value)
+{
+	uint8_t *ptr = (uint8_t *)&value;
+
+	usart_send_blocking(usart, ptr[0]);
+	usart_send_blocking(usart, ptr[1]);
+	usart_send_blocking(usart, ptr[2]);
+	usart_send_blocking(usart, ptr[3]);
+}
