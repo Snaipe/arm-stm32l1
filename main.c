@@ -23,6 +23,19 @@ static int16_t hts221_get_temperature(int16_t T0_OUT,
 	return (int16_t)T_degC;
 }
 
+static float hts221_get_humidity(int16_t H0_T0_OUT,
+				   int16_t H1_T0_OUT,
+				   int16_t H_OUT,
+				   uint8_t H0_rH,
+				   uint8_t H1_rH)
+{
+	double num = H0_rH + (H_OUT - H0_T0_OUT) * (H1_rH - H0_rH);
+	double dem = H1_T0_OUT - H0_T0_OUT;
+	double H_percent = num / dem;
+
+	return (float)H_percent;
+}
+
 int main(void)
 {
 	iwdg_set_period_ms(1000);
