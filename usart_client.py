@@ -19,27 +19,22 @@ if ser.isOpen():
         ser.flushInput()
         ser.flushOutput()
 
-        response = ser.read(5)
-        print (response)
+        response = ser.read(6)
 
-        if reponse != b"stm\r\n":
+        if response[1:] != b"stm\r\n":
             exit(1)
 
         while True:
             response = ser.read(4)
-            print (response)
-            temperature = struct.unpack('>f', response)
+            temperature = struct.unpack('<f', response)[0]
             response = ser.read(4)
-            print (response)
             ser.read(2)
-            humidity = struct.unpack('>f', response)
-            print("Temperature: " + temperature)
-            print("Humidity: " + humidity)
+            humidity = struct.unpack('<f', response)[0]
+            print("Temperature:", temperature)
+            print("Humidity:", humidity)
 
         ser.close()
-
-    except Exception as e:
-        print ("Error:" + str(e))
-
+    except KeyboardInterrupt:
+        exit()
 else:
     print ("Error: cannot open serial port.")
