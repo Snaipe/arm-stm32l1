@@ -59,12 +59,12 @@ opencm3/Makefile:
 opencm3/lib/libopencm3_stm32l1.a: opencm3/Makefile
 	$(MAKE) TARGETS="stm32/l1" $(MFLAGS) -C opencm3
 
-$(PROJ_NAME).elf: $(OBJS) opencm3/lib/libopencm3_stm32l1.a
+$(PROJ_NAME).elf: opencm3/lib/libopencm3_stm32l1.a $(OBJS)
 	$(LINK.o) $(OBJS) -o $@ $(LIBS)
 	$(OBJCOPY) -O ihex $(PROJ_NAME).elf $(PROJ_NAME).hex
 	$(OBJCOPY) -O binary $(PROJ_NAME).elf $(PROJ_NAME).bin
 
-download: $(PROJ_NAME).bin
+download: $(PROJ_NAME).elf
 	$(STFLASH) write main.bin 0x08000000
 
 run:
