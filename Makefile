@@ -48,6 +48,7 @@ LIBS = -Lopencm3/lib -lopencm3_stm32l1 \
 	   -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
 
 OBJS = $(SRCS:.c=.o)
+DEPS = $(SRCS:.c=.d)
 
 all: $(PROJ_NAME).elf
 
@@ -85,7 +86,11 @@ qemu: lib proj
 		--semihosting-cmdline main $(CMDLINE)
 
 clean:
-	$(RM) $(PROJ_NAME).elf $(PROJ_NAME).hex $(PROJ_NAME).bin
+	$(RM) $(PROJ_NAME).elf \
+			$(PROJ_NAME).hex \
+			$(PROJ_NAME).bin \
+			$(PROJ_NAME).map \
+			$(OBJS) $(DEPS)
 	$(MAKE) TARGETS="stm32/l1" $(MFLAGS) -C opencm3 clean
 
 .PHONY: lib download
