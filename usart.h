@@ -7,6 +7,6 @@ void usart_setup(void);
 
 void gpio_setup(void);
 
-void usart_print_u16(uint32_t usart, int16_t value);
+void usart_print_s32(uint32_t usart, int32_t value);
 
 #endif /* _USART_H */

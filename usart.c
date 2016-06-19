@@ -35,29 +35,27 @@ void gpio_setup(void)
 }
 
 
-void usart_print_u16(uint32_t usart, int16_t value)
+void usart_print_s32(uint32_t usart, int32_t value)
 {
 	int8_t i;
 	int8_t nr_digits = 0;
-	char buffer[5];
+	char buffer[11];
 
 	if (value < 0) {
 		usart_send_blocking(usart, '-');
 		value = value * -1;
 	}
 
-	if (value == 0) {
+	if (value == 0)
 		usart_send_blocking(usart, '0');
-	}
 
 	while (value > 0) {
 		buffer[nr_digits++] = "0123456789"[value % 10];
 		value /= 10;
 	}
 
-	for (i = nr_digits-1; i >= 0; i--) {
+	for (i = nr_digits-1; i >= 0; i--)
 		usart_send_blocking(usart, buffer[i]);
-	}
 
 	usart_send_blocking(usart, '\r');
 	usart_send_blocking(usart, '\n');
